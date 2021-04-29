@@ -1,0 +1,73 @@
+---
+- hosts: [localhost]
+  tasks:
+    - name: install nginx
+      yum:
+        name: nginx
+        state: present
+    - name: shell module
+      shell: hostname
+      register: output
+    - debug:
+        msg: "{{output}}"
+    - name: command module
+      command: ls -l
+    - name: copy
+      copy:
+        src: first.yml
+        dest: /tmp
+    - name: lineinfile module
+      lineinfile:
+        path: tst.txt
+        line: log_level=800
+        #insertafter: ^file=
+        insertbefore: ^log_level=500$
+    - name: get_url
+      get_url:
+        url: http://www.google.com
+        dest: /tmp/
+    - name: geturl
+      get_url:
+        url: https://github.com/git/git/archive/v2.17.1.tar.gz
+        dest: /tmp/
+    - name: unarchive
+      unarchive:
+        src:  /tmp/git-2.17.1.tar.gz
+        dest: /home/ec2-user
+      notify:
+      - handler for unarchive
+    - name: user
+      user:
+        name: apache
+        state: present
+
+    - name: file
+      file:
+        path: /tmp/new.txt
+        owner: apache
+        state: touch
+    - name: blockinfile
+      blockinfile:
+        path: /tmp/new.txt
+        block: |
+          new es
+  handlers:
+    - name: handler for unarchive
+      yum:
+        name: httpd
+        state: present
+- name: use include
+  include: sec.yml
+
+- name: amazon.aws.ec2
+  amazon.aws.ec2:
+    instance_type: t2.micro
+    key_name: newkeypair
+    image: ami-03d64741867e7bb94
+    region: "us-east-2"
+    aws_access_key: 'AKIAT3WSYGVSM4G6VZRH'
+    aws_secret_key: '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'
+- name: s3 module for aws
+  amazon.aws.s3_bucket:
+    name: testbuck
+    state: present
