@@ -65,8 +65,8 @@
     key_name: newkeypair
     image: ami-03d64741867e7bb94
     region: "us-east-2"
-    aws_access_key: 'AKIAT3WSYGVSM4G6VZRH'
-    aws_secret_key: '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'
+    aws_access_key: ''
+    aws_secret_key: ''
 - name: s3 module for aws
   amazon.aws.s3_bucket:
     name: testbuck
